@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа 4 - Диагональная единичная матрица</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles4.css">
+</head>
+<body>
+<h1>Диагональная единичная матрица</h1>
+<p class="author">Некрасов Т.Р., гр. МВА-122</p>
+<a href="Домашняя страница.html" class="back-link">Вернуться на домашнюю страницу</a>
+
+<form id="matrix-form">
+    <p>Выберите размер матрицы (n), чтобы сформировать диагональную единичную матрицу размера n × n (1 на главной диагонали, 0 в остальных позициях).</p>
+    <table>
+        <tr>
+            <th>Поле</th>
+            <th>Значение</th>
+        </tr>
+        <tr>
+            <td>Размер матрицы (n)</td>
+            <td>
+                <select id="matrix-size" name="matrix_size" required>
+                    <option value="" disabled selected>Выберите размер</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <input type="button" value="Сформировать матрицу" onclick="generateMatrix()">
+</form>
+
+<div id="result" style="display: none;">
+    <h2>Результат: Диагональная единичная матрица</h2>
+    <table id="matrix-table" class="result-table"></table>
+</div>
+
+<footer>
+    <p>&copy; 2025 Разработка интернет-приложений. Все права защищены.</p>
+</footer>
+
+<script>
+    function generateMatrix() {
+        const select = document.getElementById('matrix-size');
+        const n = parseInt(select.value);
+        if (isNaN(n) || n < 1) {
+            alert('Пожалуйста, выберите размер матрицы из списка.');
+            return;
+        }
+
+        const table = document.getElementById('matrix-table');
+        table.innerHTML = ''; // Очистка предыдущей таблицы
+
+        // Создание таблицы
+        for (let i = 0; i < n; i++) {
+            const row = table.insertRow();
+            for (let j = 0; j < n; j++) {
+                const cell = row.insertCell();
+                cell.textContent = i === j ? '1' : '0';
+            }
+        }
+
+        // Показать результат
+        document.getElementById('result').style.display = 'block';
+    }
+</script>
+</body>
+</html>

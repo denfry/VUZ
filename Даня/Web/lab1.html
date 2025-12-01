@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Зал и качалка: Тренажерный зал</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="index.html" class="nav-link">Главная</a></li>
+            <li><a href="lab1.html" class="nav-link active">Тренажерный зал</a></li>
+            <li><a href="lab3.html" class="nav-link">Госуслуги</a></li>
+            <li><a href="lab5.html" class="nav-link">Таблица кубов</a></li>
+            <li><a href="lab7.php" class="nav-link">ЛР 7 – PHP</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <h1>Зал и качалка: Тренажерный зал</h1>
+    <p class="author">Юрков Д.А., гр. МВА-122</p>
+    <section>
+        <h2>Добро пожаловать в наш тренажерный зал!</h2>
+        <p>Достигайте своих фитнес-целей с профессиональным оборудованием и тренерами.</p>
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=400&fit=crop" alt="Тренажерный зал" style="max-width: 100%; height: auto; border-radius: 12px; margin: 1em 0; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+        <a href="#services" class="btn">Узнать больше</a>
+    </section>
+    <section id="services" class="card-container">
+        <div class="card">
+            <h3>Силовые тренировки</h3>
+            <p>Современные тренажеры для развития силы и выносливости. Индивидуальный подход и программы для всех уровней.</p>
+        </div>
+        <div class="card">
+            <h3>Кардиотренировки</h3>
+            <p>Беговые дорожки, велотренажеры и эллипсоиды.</p>
+        </div>
+        <div class="card">
+            <h3>Персональные тренировки</h3>
+            <p>Индивидуальные программы с тренерами.</p>
+        </div>
+    </section>
+    <section>
+        <h2>Расписание</h2>
+        <p>Ознакомьтесь с групповыми занятиями.</p>
+        <a href="https://www.acefitness.org/resources/everyone/exercise-library/" target="_blank" class="btn">Библиотека упражнений ACE Fitness</a>
+        <a href="https://www.bodybuilding.com/content/workout-plans.html" target="_blank" class="btn">Программы тренировок Bodybuilding.com</a>
+    </section>
+    <section>
+        <h2>Контакты</h2>
+        <p>Свяжитесь с нами для записи или консультации!</p>
+        <button class="btn" onclick="showContactModal()">Записаться</button>
+    </section>
+</main>
+<footer>
+    <p>© 2025 Зал и качалка. Все права защищены.</p>
+</footer>
+<div id="contactModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeContactModal()">&times;</span>
+        <h2>Запись на консультацию</h2>
+        <form id="contactForm">
+            <input type="text" placeholder="ФИО" required>
+            <input type="email" placeholder="Email" required>
+            <input type="tel" placeholder="Телефон" required>
+            <button type="submit" class="btn">Отправить</button>
+        </form>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

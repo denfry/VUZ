@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблица произведений числа</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<h1>Таблица произведений числа</h1>
+<p class="author">Игнатьев С.А., гр. МВА-122</p>
+<a href="Домашняя страница.html" class="back-link">Вернуться на домашнюю страницу</a>
+
+<form id="matrix-form" action="#" method="post">
+    <p>Выберите число (n), чтобы сформировать таблицу произведений n на числа от 1 до 9.</p>
+    <table>
+        <tr><th>Поле</th><th>Значение</th></tr>
+        <tr><td>Число (n)</td><td><select id="number" name="number" required>
+            <option value="" disabled selected>Выберите число</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+        </select></td></tr>
+    </table>
+    <input type="submit" value="Сформировать">
+</form>
+
+<div id="result">
+    <h2>Результат: Таблица произведений числа</h2>
+    <table id="result-table" class="result-table"></table>
+</div>
+
+<footer>
+    <p>© 2025 Все права защищены.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

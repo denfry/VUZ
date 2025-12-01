@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Декларация уплаты транспортного налога</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="index.html" class="nav-link">Главная</a></li>
+            <li><a href="lab1.html" class="nav-link">Тренажерный зал</a></li>
+            <li><a href="lab3.html" class="nav-link active">Транспортный налог</a></li>
+            <li><a href="lab5.html" class="nav-link">Таблица степеней</a></li>
+            <li><a href="lab7.php" class="nav-link">ЛР 7 – PHP</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <h1>Декларация уплаты транспортного налога</h1>
+    <p class="author">Юрков Д.А., гр. МВА-122</p>
+    <section>
+        <h2>Заполните форму декларации</h2>
+        <form id="serviceForm" onsubmit="submitServiceForm(event)">
+            <table>
+                <tr>
+                    <th>ФИО налогоплательщика</th>
+                    <td><input type="text" id="name" required></td>
+                </tr>
+                <tr>
+                    <th>ИНН</th>
+                    <td><input type="text" id="inn" required></td>
+                </tr>
+                <tr>
+                    <th>Паспортные данные</th>
+                    <td><input type="text" id="passport" required></td>
+                </tr>
+                <tr>
+                    <th>Марка и модель транспортного средства</th>
+                    <td><input type="text" id="vehicle" required></td>
+                </tr>
+                <tr>
+                    <th>Государственный номер</th>
+                    <td><input type="text" id="regNumber" required></td>
+                </tr>
+                <tr>
+                    <th>Мощность двигателя (л.с.)</th>
+                    <td><input type="number" id="power" min="1" required></td>
+                </tr>
+                <tr>
+                    <th>Период уплаты налога</th>
+                    <td>
+                        <select id="period" required>
+                            <option value="">Выберите период</option>
+                            <option value="2024">2024 год</option>
+                            <option value="2023">2023 год</option>
+                            <option value="2022">2022 год</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Сумма налога к уплате (руб.)</th>
+                    <td><input type="number" id="amount" min="0" step="0.01" required></td>
+                </tr>
+                <tr>
+                    <th>Дата подачи декларации</th>
+                    <td><input type="date" id="date" required></td>
+                </tr>
+            </table>
+            <button type="submit" class="btn">Отправить декларацию</button>
+        </form>
+    </section>
+</main>
+<footer>
+    <p>© 2025 Все права защищены.</p>
+</footer>
+<div id="serviceModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeServiceModal()">&times;</span>
+        <h2>Декларация отправлена</h2>
+        <p id="serviceConfirmation"></p>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

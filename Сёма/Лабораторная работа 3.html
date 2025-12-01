@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма заказа продукции</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<h1>Форма заказа продукции</h1>
+<p class="author">Игнатьев С.А., гр. МВА-122</p>
+<a href="Домашняя страница.html" class="back-link">Вернуться на домашнюю страницу</a>
+
+<form id="water-meter-form" action="#" method="post">
+    <table>
+        <tr><th>Поле</th><th>Значение</th></tr>
+        <tr><td>ФИО заказчика</td><td><input type="text" name="name" required></td></tr>
+        <tr><td>Адрес доставки</td><td><input type="text" name="address" required></td></tr>
+        <tr><td>Тип продукции</td><td><select name="product" required>
+            <option value="" disabled selected>Выберите продукцию</option>
+            <option value="furniture">Мебель</option>
+            <option value="electronics">Электроника</option>
+            <option value="clothes">Одежда</option>
+        </select></td></tr>
+        <tr><td>Количество</td><td><input type="number" name="quantity" min="1" required></td></tr>
+        <tr><td>Дата заказа</td><td><input type="date" name="date" required></td></tr>
+    </table>
+    <input type="submit" value="Отправить">
+</form>
+
+<footer>
+    <p>© 2025 Все права защищены.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

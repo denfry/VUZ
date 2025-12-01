@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа 3 - Форма ввода показаний счетчика воды</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles3.css">
+</head>
+<body>
+    <h1>Форма ввода показаний счетчика воды</h1>
+    <p class="author">Некрасов Т.Р., гр. МВА-122</p>
+    <a href="Домашняя страница.html" class="back-link">Вернуться на домашнюю страницу</a>
+
+    <form id="water-meter-form" action="#" method="post">
+        <table>
+            <tr>
+                <th>Поле</th>
+                <th>Значение</th>
+            </tr>
+            <tr>
+                <td>Номер счетчика</td>
+                <td><input type="text" name="meter_number" required></td>
+            </tr>
+            <tr>
+                <td>Дата снятия показаний</td>
+                <td><input type="date" name="reading_date" required></td>
+            </tr>
+            <tr>
+                <td>Показания холодной воды (м³)</td>
+                <td><input type="number" name="cold_water" step="0.001" min="0" required></td>
+            </tr>
+            <tr>
+                <td>Показания горячей воды (м³)</td>
+                <td><input type="number" name="hot_water" step="0.001" min="0" required></td>
+            </tr>
+        </table>
+        <input type="submit" value="Отправить показания">
+    </form>
+
+    <footer>
+        <p>&copy; 2025 Разработка интернет-приложений. Все права защищены.</p>
+    </footer>
+</body>
+</html>

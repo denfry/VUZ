@@ -1,0 +1,334 @@
+body {
+    font-family: 'Poppins', 'Roboto', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+    color: #004d40;
+    text-align: center;
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+header {
+    background: linear-gradient(45deg, #00796b, #004d40);
+    padding: 1em 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+}
+
+nav ul li {
+    display: inline;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    background: #00897b;
+}
+
+h1 {
+    color: #00695c;
+    font-size: 2.5em;
+    margin: 0.5em 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #00796b;
+    font-size: 1.8em;
+    margin: 1em 0;
+    transition: color 0.3s ease;
+}
+
+h2:hover {
+    color: #004d40;
+}
+
+h3 {
+    color: #00796b;
+    font-size: 1.4em;
+    margin: 0.5em 0;
+}
+
+p.author {
+    color: #00897b;
+    font-size: 1.2em;
+    margin-bottom: 1.5em;
+    font-style: italic;
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5em;
+    margin: 2em auto;
+    max-width: 1200px;
+}
+
+.card {
+    background: #ffffff;
+    padding: 1.5em;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.btn {
+    display: inline-block;
+    margin: 1em 0;
+    color: #fff;
+    background: linear-gradient(45deg, #00897b, #4db6ac);
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.8em 1.5em;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    cursor: pointer;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(45deg, #00695c, #00897b);
+}
+
+form, #result {
+    max-width: 700px;
+    margin: 2em auto;
+    background: #ffffff;
+    padding: 2em;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.5s ease;
+}
+
+form:hover, #result:hover {
+    transform: translateY(-5px);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+}
+
+th, td {
+    padding: 1em;
+    border: 1px solid #b2dfdb;
+    text-align: left;
+    transition: background 0.3s ease;
+}
+
+th {
+    background: linear-gradient(45deg, #00796b, #004d40);
+    color: #fff;
+    font-weight: bold;
+}
+
+td {
+    background: #f4fafa;
+}
+
+td:hover {
+    background: #e0f7fa;
+}
+
+input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], select {
+    width: 100%;
+    padding: 0.7em;
+    border: 1px solid #80cbc4;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1em;
+    color: #004d40;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, input[type="date"]:focus, input[type="number"]:focus, select:focus {
+    border-color: #00897b;
+    box-shadow: 0 0 8px rgba(0, 137, 123, 0.3);
+    outline: none;
+}
+
+select {
+    appearance: none;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><path fill="%23004d40" d="M7 10l5 5 5-5z"/></svg>') no-repeat right 0.75em center/12px 12px;
+    cursor: pointer;
+}
+
+table.result-table {
+    margin: 0 auto;
+    text-align: center;
+}
+
+table.result-table th, table.result-table td {
+    width: 120px;
+    padding: 0.9em;
+    text-align: center;
+    font-size: 1.1em;
+    border: 1px solid #b2dfdb;
+}
+
+footer {
+    margin-top: 3em;
+    padding: 1em;
+    color: #00695c;
+    font-size: 0.95em;
+    background: #e0f7fa;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 2em;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #004d40;
+}
+
+.fade-in {
+    animation: fadeInRow 0.5s ease-in;
+}
+
+@keyframes fadeInRow {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 1em;
+    }
+
+    h1 {
+        font-size: 2em;
+    }
+
+    h2 {
+        font-size: 1.5em;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 1em;
+    }
+
+    .card-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        min-width: 100%;
+    }
+
+    form, #result {
+        padding: 1.5em;
+    }
+
+    th, td {
+        padding: 0.8em;
+    }
+
+    table.result-table th, table.result-table td {
+        width: 100px;
+        font-size: 1em;
+    }
+
+    .btn {
+        padding: 0.7em 1.3em;
+        font-size: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.7em;
+    }
+
+    h2 {
+        font-size: 1.3em;
+    }
+
+    table {
+        font-size: 0.9em;
+    }
+
+    th, td {
+        padding: 0.6em;
+    }
+
+    table.result-table th, table.result-table td {
+        width: 80px;
+        font-size: 0.95em;
+    }
+
+    .btn {
+        padding: 0.6em 1em;
+        font-size: 0.95em;
+    }
+}
+
+.error-message {
+    animation: fadeIn 0.3s ease-in;
+    text-align: left;
+    margin-left: 10px;
+}
+
+input.error, select.error {
+    border-color: #d32f2f !important;
+    box-shadow: 0 0 5px rgba(211, 47, 47, 0.3);
+}

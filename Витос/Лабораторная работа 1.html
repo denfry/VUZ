@@ -1,0 +1,248 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Странные, смешные и прикольные рыбы</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        header {
+            background-color: #b71c1c;
+            color: #ffffff;
+            padding: 2em;
+            text-align: center;
+            position: relative;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        nav {
+            background-color: #ff0000;
+            padding: 1em;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 1em;
+        }
+        nav ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        nav ul li a:hover {
+            color: #000000;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2em;
+        }
+        .hero {
+            background-image: url('https://images.unsplash.com/photo-1518837695005-208d78dff1c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            padding: 4em 2em;
+            text-align: center;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px #000000;
+            border-radius: 20px;
+            margin-bottom: 2em;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+        .hero > * {
+            position: relative;
+            z-index: 2;
+        }
+        .section {
+            margin: 2em 0;
+            padding: 2em;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            background-color: rgba(183, 28, 28, 0.2);
+            animation: fadeIn 1s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .fish-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2em;
+        }
+        .fish-card {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 1em;
+            border-radius: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .fish-card:hover {
+            transform: rotate(5deg) scale(1.05);
+            box-shadow: 0 0 30px #ff0000;
+        }
+        .fish-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 1em;
+        }
+        .fun-fact {
+            font-style: italic;
+            color: #ff0000;
+        }
+        footer {
+            background-color: #b71c1c;
+            color: #ffffff;
+            text-align: center;
+            padding: 1em 0;
+            margin-top: 2em;
+        }
+        @media (max-width: 768px) {
+            nav ul li {
+                display: block;
+                margin: 0.5em 0;
+            }
+            .hero {
+                padding: 2em 1em;
+            }
+            .fish-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Странные, смешные и прикольные рыбы</h1>
+        <p>Панкратов В.Р., гр. МВА-122</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#home">Главная</a></li>
+            <li><a href="#fish">Рыбы</a></li>
+            <li><a href="#facts">Факты</a></li>
+            <li><a href="#contacts">Контакты</a></li>
+            <li><a href="Домашняя страница.html">Домашняя страница</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <section id="home" class="hero">
+            <h2>Погрузись в мир смешных рыб!</h2>
+            <p>Открой для себя самых странных и забавных обитателей океана.</p>
+            <a href="#fish" class="btn">Посмотреть рыбы</a>
+        </section>
+        <section id="fish" class="section fish-grid">
+            <div class="fish-card">
+                <img src="fish_clown.jpg" alt="Рыба-клоун">
+                <h3>Рыба-клоун</h3>
+                <p>Живет в анемонах и выглядит как шут.</p>
+                <p class="fun-fact">Факт: Может менять пол!</p>
+            </div>
+            <div class="fish-card">
+                <img src="fish_puffer.jpg" alt="Рыба-фуга">
+                <h3>Рыба-фуга</h3>
+                <p>Раздувается как шар, когда пугается.</p>
+                <p class="fun-fact">Факт: Ядовитая, но деликатес в Японии!</p>
+            </div>
+            <div class="fish-card">
+                <img src="fish_eel.jpg" alt="Угорь">
+                <h3>Угорь</h3>
+                <p>Выглядит как змея и может шокировать электричеством.</p>
+                <p class="fun-fact">Факт: Путешествует тысячи километров!</p>
+            </div>
+            <div class="fish-card">
+                <img src="fish_stone.jpg" alt="Рыба-камень">
+                <h3>Рыба-камень</h3>
+                <p>Маскируется под камень и очень ядовитая.</p>
+                <p class="fun-fact">Факт: Самая ядовитая рыба в мире!</p>
+            </div>
+        </section>
+        <section id="facts" class="section">
+            <h2>Интересные факты</h2>
+            <p>Рыбы могут быть очень забавными! Некоторые меняют цвет, другие поют песни.</p>
+            <ul>
+                <li><a href="https://www.nationalgeographic.com/animals/fish" target="_blank">Факты о рыбах от National Geographic</a></li>
+                <li><a href="https://www.sciencekids.co.nz/sciencefacts/animals/fish.html" target="_blank">Забавные факты о рыбах</a></li>
+            </ul>
+        </section>
+        <section id="contacts" class="section contacts-section">
+            <img src="fish_icon.jpg" alt="Иконка рыбы">
+            <p>Свяжитесь с нами для больше рыбных историй!</p>
+            <a href="#" class="btn">Написать</a>
+        </section>
+        <footer>
+            <p>&copy; 2025 Странные рыбы. Все права защищены.</p>
+        </footer>
+    </div>
+</body>
+</html>

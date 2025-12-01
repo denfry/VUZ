@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Таблица степеней числа</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+    <nav>
+        <ul>
+            <li><a href="index.html" class="nav-link">Главная</a></li>
+            <li><a href="lab1.html" class="nav-link">Тренажерный зал</a></li>
+            <li><a href="lab3.html" class="nav-link">Транспортный налог</a></li>
+            <li><a href="lab5.html" class="nav-link active">Таблица степеней</a></li>
+            <li><a href="lab7.php" class="nav-link">ЛР 7 – PHP</a></li>
+        </ul>
+    </nav>
+</header>
+<main>
+    <h1>Таблица степеней числа</h1>
+    <p class="author">Юрков Д.А., гр. МВА-122</p>
+    <section>
+        <h2>Задать числа a и n. Вывести в виде таблицы значения a^i, где i меняется от 1 до n</h2>
+        <form id="powerForm" onsubmit="generatePowerTable(event)">
+            <table>
+                <tr>
+                    <th>Основание (a)</th>
+                    <td><input type="number" id="base" step="any" required></td>
+                </tr>
+                <tr>
+                    <th>Показатель степени (n)</th>
+                    <td><input type="number" id="exponent" min="1" required></td>
+                </tr>
+            </table>
+            <button type="submit" class="btn">Сгенерировать таблицу</button>
+        </form>
+    </section>
+    <section id="result" style="display: none;">
+        <h2>Результат: Таблица значений a^i</h2>
+        <table class="result-table">
+            <thead>
+            <tr>
+                <th>i</th>
+                <th>a^i</th>
+            </tr>
+            </thead>
+            <tbody id="power-table-body"></tbody>
+        </table>
+    </section>
+</main>
+<footer>
+    <p>© 2025 Все права защищены.</p>
+</footer>
+<div id="powerModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closePowerModal()">&times;</span>
+        <h2>Таблица сгенерирована</h2>
+        <p>Таблица степеней числа успешно создана!</p>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
