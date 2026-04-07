@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab7.controllers.DatabaseController">
+    <center>
+        <VBox spacing="10.0">
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+            <HBox spacing="10.0">
+                <Button onAction="#handleGetVersion" text="Версия БД" />
+                <Button onAction="#handleRefreshData" text="Обновить данные" />
+                <Button onAction="#handleCreateDemoTable" text="Создать демонстрационные таблицы" />
+                <Button onAction="#handleClose" text="Закрыть" />
+            </HBox>
+            <Label text="Результат запроса SELECT VERSION():" />
+            <TextArea fx:id="versionArea" editable="false" prefHeight="70.0" />
+            <Label fx:id="summaryLabel" text="Сводка БД" />
+            <Label text="Данные из таблицы users:" />
+            <TableView fx:id="usersTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="idColumn" prefWidth="55.0" text="ID" />
+                    <TableColumn fx:id="emailColumn" prefWidth="210.0" text="Email" />
+                    <TableColumn fx:id="roleColumn" prefWidth="90.0" text="Role" />
+                    <TableColumn fx:id="planColumn" prefWidth="110.0" text="Plan" />
+                    <TableColumn fx:id="analysesColumn" prefWidth="100.0" text="Analyses" />
+                    <TableColumn fx:id="activeColumn" prefWidth="80.0" text="Active" />
+                    <TableColumn fx:id="createdAtColumn" prefWidth="180.0" text="Created At" />
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>

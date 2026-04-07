@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.controllers.RefrigeratorsViewController">
+    <SplitPane dividerPositions="0.7" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="800.0">
+            <TableView fx:id="refrigeratorsTable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <columns>
+                    <TableColumn fx:id="manufacturerColumn" prefWidth="200.0" text="Производитель" />
+                    <TableColumn fx:id="colorColumn" prefWidth="150.0" text="Цвет" />
+                    <TableColumn fx:id="heightColumn" prefWidth="120.0" text="Высота (см)" style="-fx-alignment: center-right" />
+                    <TableColumn fx:id="widthColumn" prefWidth="120.0" text="Ширина (см)" style="-fx-alignment: center-right" />
+                    <TableColumn fx:id="depthColumn" prefWidth="120.0" text="Глубина (см)" style="-fx-alignment: center-right" />
+                    <TableColumn fx:id="volumeColumn" prefWidth="150.0" text="Объем (л)" style="-fx-alignment: center-right" />
+                </columns>
+            </TableView>
+        </AnchorPane>
+
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="800.0">
+            <GridPane hgap="10.0" vgap="10.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+
+                <Label text="Производитель:" style="-fx-font-weight: bold" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <TextField fx:id="edManufacturer" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                <Label text="Цвет:" style="-fx-font-weight: bold" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+                <ComboBox fx:id="cbColor" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+
+                <Label text="Высота (см):" style="-fx-font-weight: bold" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <TextField fx:id="edHeight" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                <Label text="Ширина (см):" style="-fx-font-weight: bold" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                <TextField fx:id="edWidth" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+
+                <Label text="Глубина (см):" style="-fx-font-weight: bold" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                <TextField fx:id="edDepth" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                <VBox spacing="10.0" GridPane.columnIndex="4" GridPane.rowIndex="0" GridPane.rowSpan="3" alignment="CENTER">
+                    <Button fx:id="bAdd" onAction="#handleNew" prefWidth="100.0" prefHeight="30.0" text="Добавить" style="-fx-font-size: 13px;" />
+                    <Button fx:id="bEdit" onAction="#handleEdit" prefWidth="100.0" prefHeight="30.0" text="Изменить" style="-fx-font-size: 13px;" />
+                    <Button fx:id="bDel" onAction="#handleDel" prefWidth="100.0" prefHeight="30.0" text="Удалить" style="-fx-font-size: 13px;" />
+                    <Button fx:id="bClear" onAction="#handleClear" prefWidth="100.0" prefHeight="30.0" text="Очистить" style="-fx-font-size: 13px;" />
+                </VBox>
+            </GridPane>
+        </AnchorPane>
+    </SplitPane>
+</AnchorPane>

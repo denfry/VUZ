@@ -1,0 +1,8 @@
+com\lab7\MainApp.class
+com\lab7\gui\Dialogs.class
+module-info.class
+com\lab7\controllers\MainController.class
+com\lab7\db\DatabaseManager.class
+com\lab7\controllers\DatabaseController.class
+com\lab7\model\UserRecord.class
+com\lab7\controllers\LoginController.class

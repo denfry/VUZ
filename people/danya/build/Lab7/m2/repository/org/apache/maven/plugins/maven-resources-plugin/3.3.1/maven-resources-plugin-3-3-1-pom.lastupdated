@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Wed Mar 11 15:31:39 GMT+03:00 2026
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1773232299070
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact org.apache.maven.plugins\:maven-resources-plugin\:pom\:3.3.1 from/to central (https\://repo.maven.apache.org/maven2)\: \u042D\u0442\u043E\u0442 \u0445\u043E\u0441\u0442 \u043D\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u0435\u043D (repo.maven.apache.org)

@@ -1,0 +1,3 @@
+URL_DB=jdbc:postgresql://localhost:5433/veritasad
+User=veritasad
+Pwd=veritasad123

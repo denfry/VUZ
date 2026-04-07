@@ -1,0 +1,9 @@
+com\MainApp.class
+com\data\Refrigerator.class
+com\controllers\RefrigeratorsViewController.class
+module-info.class
+com\controllers\RefrigeratorsViewController$4.class
+com\controllers\RefrigeratorsViewController$2.class
+com\controllers\RefrigeratorsViewController$3.class
+com\gui\Dialogs.class
+com\controllers\RefrigeratorsViewController$1.class

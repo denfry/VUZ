@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lab7.controllers.MainController">
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu text="Файл">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpenDatabaseWindow" text="Открыть форму БД" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleExit" text="Выход" />
+                    </items>
+                </Menu>
+                <Menu text="База данных">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpenDatabaseWindow" text="Таблица пользователей" />
+                    </items>
+                </Menu>
+                <Menu text="Справочники">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpenDatabaseWindow" text="Профили риска" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpenDatabaseWindow" text="Тикеры" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpenDatabaseWindow" text="Типы операций" />
+                    </items>
+                </Menu>
+                <Menu text="Справка">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#handleOpenDatabaseWindow" text="Открыть рабочую форму" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <center>
+        <VBox alignment="CENTER" spacing="16.0">
+            <padding>
+                <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
+            </padding>
+            <ImageView fx:id="imageView" fitHeight="220.0" fitWidth="920.0" pickOnBounds="true" preserveRatio="true" />
+            <Label text="VSC_Vitos: окно управления БД">
+                <font>
+                    <Font name="System Bold" size="22.0" />
+                </font>
+            </Label>
+            <Label fx:id="databaseInfoLabel" text="Работа с таблицей базы данных открывается через меню сверху." wrapText="true" />
+        </VBox>
+    </center>
+</BorderPane>

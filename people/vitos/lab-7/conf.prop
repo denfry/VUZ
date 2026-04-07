@@ -1,0 +1,3 @@
+URL_DB=jdbc:postgresql://localhost:5433/lab7_variant11
+User=trading_bot
+Pwd=devpassword
