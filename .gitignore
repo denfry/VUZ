@@ -47,3 +47,4 @@ artifacts/
 **/*.normalized.txt
 **/*.decoded.txt
 **/*.fixed.txt
+.ai/
