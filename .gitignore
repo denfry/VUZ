@@ -39,3 +39,11 @@ artifacts/
 # *.docx
 # *.doc
 
+
+# AI tooling artifacts (local assistant folders and temp text exports)
+.claude/
+.codex/
+**/*.pdfplumber.txt
+**/*.normalized.txt
+**/*.decoded.txt
+**/*.fixed.txt
