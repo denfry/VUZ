@@ -48,3 +48,5 @@ artifacts/
 **/*.decoded.txt
 **/*.fixed.txt
 .ai/
+docs/
+AGENTS.md
