@@ -2,6 +2,9 @@ module com.lab7 {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires com.h2database;
+    requires jasperreports;
+    requires java.desktop;
 
     opens com.lab7 to javafx.fxml;
     opens com.lab7.controllers to javafx.fxml;

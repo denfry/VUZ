@@ -2,46 +2,86 @@ package com.lab7.controllers;
 
 import com.lab7.db.DatabaseManager;
 import com.lab7.gui.Dialogs;
+import com.lab7.model.AnalysisRecord;
 import com.lab7.model.UserRecord;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseController {
 
-    @FXML
-    private TextArea versionArea;
-    @FXML
-    private Label summaryLabel;
-    @FXML
-    private TableView<UserRecord> usersTable;
-    @FXML
-    private TableColumn<UserRecord, Integer> idColumn;
-    @FXML
-    private TableColumn<UserRecord, String> emailColumn;
-    @FXML
-    private TableColumn<UserRecord, String> roleColumn;
-    @FXML
-    private TableColumn<UserRecord, String> planColumn;
-    @FXML
-    private TableColumn<UserRecord, Integer> analysesColumn;
-    @FXML
-    private TableColumn<UserRecord, Boolean> activeColumn;
-    @FXML
-    private TableColumn<UserRecord, String> createdAtColumn;
+    @FXML private TextArea versionArea;
+    @FXML private Label summaryLabel;
 
-    private final ObservableList<UserRecord> data = FXCollections.observableArrayList();
+    @FXML private TableView<UserRecord> usersTable;
+    @FXML private TableColumn<UserRecord, Integer> idColumn;
+    @FXML private TableColumn<UserRecord, String> emailColumn;
+    @FXML private TableColumn<UserRecord, String> roleColumn;
+    @FXML private TableColumn<UserRecord, String> planColumn;
+    @FXML private TableColumn<UserRecord, Integer> analysesColumn;
+    @FXML private TableColumn<UserRecord, Boolean> activeColumn;
+    @FXML private TableColumn<UserRecord, String> createdAtColumn;
+
+    @FXML private TextField userSearchField;
+    @FXML private TextField userEmailField;
+    @FXML private ComboBox<String> userRoleCombo;
+    @FXML private ComboBox<String> userPlanCombo;
+    @FXML private TextField userTotalAnalysesField;
+    @FXML private CheckBox userActiveCheck;
+
+    @FXML private TableView<AnalysisRecord> analysesTable;
+    @FXML private TableColumn<AnalysisRecord, Integer> analysisIdColumn;
+    @FXML private TableColumn<AnalysisRecord, String> taskIdColumn;
+    @FXML private TableColumn<AnalysisRecord, String> videoIdColumn;
+    @FXML private TableColumn<AnalysisRecord, String> sourceTypeColumn;
+    @FXML private TableColumn<AnalysisRecord, String> statusColumn;
+    @FXML private TableColumn<AnalysisRecord, Double> confidenceColumn;
+    @FXML private TableColumn<AnalysisRecord, Boolean> hasAdvertisingColumn;
+    @FXML private TableColumn<AnalysisRecord, String> analysisCreatedAtColumn;
+
+    @FXML private TextField analysisTaskIdField;
+    @FXML private TextField analysisVideoIdField;
+    @FXML private ComboBox<String> analysisSourceTypeCombo;
+    @FXML private ComboBox<String> analysisStatusCombo;
+    @FXML private TextField analysisConfidenceField;
+    @FXML private CheckBox analysisHasAdvertisingCheck;
+
+    @FXML private DatePicker reportDateFrom;
+    @FXML private DatePicker reportDateTo;
+
+    private final ObservableList<UserRecord> users = FXCollections.observableArrayList();
+    private final ObservableList<AnalysisRecord> analyses = FXCollections.observableArrayList();
+
     private Stage dialogStage;
 
     @FXML
@@ -53,11 +93,49 @@ public class DatabaseController {
         analysesColumn.setCellValueFactory(new PropertyValueFactory<>("totalAnalyses"));
         activeColumn.setCellValueFactory(new PropertyValueFactory<>("active"));
         createdAtColumn.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
-        usersTable.setItems(data);
+        usersTable.setItems(users);
+
+        analysisIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        taskIdColumn.setCellValueFactory(new PropertyValueFactory<>("taskId"));
+        videoIdColumn.setCellValueFactory(new PropertyValueFactory<>("videoId"));
+        sourceTypeColumn.setCellValueFactory(new PropertyValueFactory<>("sourceType"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+        confidenceColumn.setCellValueFactory(new PropertyValueFactory<>("confidenceScore"));
+        hasAdvertisingColumn.setCellValueFactory(new PropertyValueFactory<>("hasAdvertising"));
+        analysisCreatedAtColumn.setCellValueFactory(new PropertyValueFactory<>("createdAt"));
+        analysesTable.setItems(analyses);
+
+        userRoleCombo.setItems(FXCollections.observableArrayList("user", "admin"));
+        userPlanCombo.setItems(FXCollections.observableArrayList("free", "starter", "pro", "business", "enterprise"));
+        analysisSourceTypeCombo.setItems(FXCollections.observableArrayList("file", "url", "youtube", "telegram", "instagram", "tiktok", "vk"));
+        analysisStatusCombo.setItems(FXCollections.observableArrayList("pending", "queued", "processing", "completed", "failed"));
+
+        clearUserForm();
+        clearAnalysisForm();
+        reportDateFrom.setValue(LocalDate.now().minusMonths(1));
+        reportDateTo.setValue(LocalDate.now());
 
         handleGetVersion();
         handleRefreshData();
-        loadSummary();
+
+        usersTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) {
+                clearUserForm();
+                analyses.clear();
+                clearAnalysisForm();
+            } else {
+                fillUserForm(newVal);
+                loadAnalysesForUser(newVal.getId());
+            }
+        });
+
+        analysesTable.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) {
+                clearAnalysisForm();
+            } else {
+                fillAnalysisForm(newVal);
+            }
+        });
     }
 
     public void initialize(Stage dialogStage) {
@@ -67,40 +145,21 @@ public class DatabaseController {
     @FXML
     private void handleGetVersion() {
         try (Statement stmt = DatabaseManager.getConnection().createStatement();
-             ResultSet rs = stmt.executeQuery("SELECT VERSION()")) {
+             java.sql.ResultSet rs = stmt.executeQuery("SELECT H2VERSION()")) {
             if (rs.next()) {
-                versionArea.setText(rs.getString(1));
+                versionArea.setText("H2 " + rs.getString(1));
             }
         } catch (SQLException e) {
-            Dialogs.showError("Ошибка", "Не удалось получить версию: " + e.getMessage(), dialogStage);
+            Dialogs.showError("Ошибка", "Не удалось получить версию БД: " + e.getMessage(), dialogStage);
         }
     }
 
     @FXML
     private void handleRefreshData() {
-        data.clear();
-        try (Statement stmt = DatabaseManager.getConnection().createStatement();
-             ResultSet rs = stmt.executeQuery("""
-                     SELECT id,
-                            COALESCE(email, '(без email)') AS email,
-                            role::text AS role,
-                            plan::text AS plan,
-                            total_analyses,
-                            is_active,
-                            TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI') AS created_at
-                     FROM users
-                     ORDER BY id
-                     """)) {
-            while (rs.next()) {
-                data.add(new UserRecord(
-                        rs.getInt("id"),
-                        rs.getString("email"),
-                        rs.getString("role"),
-                        rs.getString("plan"),
-                        rs.getInt("total_analyses"),
-                        rs.getBoolean("is_active"),
-                        rs.getString("created_at")
-                ));
+        try {
+            users.setAll(DatabaseManager.getUsers(userSearchField.getText()));
+            if (!users.isEmpty() && usersTable.getSelectionModel().getSelectedItem() == null) {
+                usersTable.getSelectionModel().selectFirst();
             }
             loadSummary();
         } catch (SQLException e) {
@@ -110,180 +169,250 @@ public class DatabaseController {
     }
 
     @FXML
+    private void handleSearchUsers() {
+        handleRefreshData();
+    }
+
+    @FXML
+    private void handleAddUser() {
+        try {
+            String email = required(userEmailField.getText(), "Введите email пользователя");
+            String role = required(userRoleCombo.getValue(), "Выберите роль");
+            String plan = required(userPlanCombo.getValue(), "Выберите тариф");
+            int total = parseNonNegativeInt(userTotalAnalysesField.getText(), "Количество анализов должно быть неотрицательным числом");
+            boolean active = userActiveCheck.isSelected();
+
+            Connection con = DatabaseManager.getConnection();
+            con.setAutoCommit(false);
+            try {
+                int id = DatabaseManager.insertUser(email, plan, role, total, active);
+                con.commit();
+                Dialogs.showInfo("Успех", "Пользователь добавлен, ID = " + id, dialogStage);
+            } catch (Exception ex) {
+                con.rollback();
+                throw ex;
+            } finally {
+                con.setAutoCommit(true);
+            }
+
+            handleRefreshData();
+        } catch (Exception e) {
+            Dialogs.showError("Ошибка", e.getMessage(), dialogStage);
+        }
+    }
+
+    @FXML
+    private void handleUpdateUser() {
+        UserRecord selected = usersTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            Dialogs.showError("Ошибка", "Выберите пользователя в таблице", dialogStage);
+            return;
+        }
+
+        try {
+            String email = required(userEmailField.getText(), "Введите email пользователя");
+            String role = required(userRoleCombo.getValue(), "Выберите роль");
+            String plan = required(userPlanCombo.getValue(), "Выберите тариф");
+            int total = parseNonNegativeInt(userTotalAnalysesField.getText(), "Количество анализов должно быть неотрицательным числом");
+            boolean active = userActiveCheck.isSelected();
+
+            Connection con = DatabaseManager.getConnection();
+            con.setAutoCommit(false);
+            try {
+                DatabaseManager.updateUser(selected.getId(), email, plan, role, total, active);
+                con.commit();
+                Dialogs.showInfo("Успех", "Пользователь обновлён", dialogStage);
+            } catch (Exception ex) {
+                con.rollback();
+                throw ex;
+            } finally {
+                con.setAutoCommit(true);
+            }
+
+            handleRefreshData();
+        } catch (Exception e) {
+            Dialogs.showError("Ошибка", e.getMessage(), dialogStage);
+        }
+    }
+
+    @FXML
+    private void handleDeleteUser() {
+        UserRecord selected = usersTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            Dialogs.showError("Ошибка", "Выберите пользователя в таблице", dialogStage);
+            return;
+        }
+
+        try {
+            Connection con = DatabaseManager.getConnection();
+            con.setAutoCommit(false);
+            try {
+                DatabaseManager.deleteUser(selected.getId());
+                con.commit();
+                Dialogs.showInfo("Успех", "Пользователь удалён", dialogStage);
+            } catch (Exception ex) {
+                con.rollback();
+                throw ex;
+            } finally {
+                con.setAutoCommit(true);
+            }
+
+            handleRefreshData();
+            analyses.clear();
+        } catch (Exception e) {
+            Dialogs.showError("Ошибка", e.getMessage(), dialogStage);
+        }
+    }
+
+    @FXML
+    private void handleAddAnalysis() {
+        UserRecord user = usersTable.getSelectionModel().getSelectedItem();
+        if (user == null) {
+            Dialogs.showError("Ошибка", "Сначала выберите пользователя (главная таблица)", dialogStage);
+            return;
+        }
+
+        try {
+            String taskId = required(analysisTaskIdField.getText(), "Введите task_id");
+            String videoId = required(analysisVideoIdField.getText(), "Введите video_id");
+            String sourceType = required(analysisSourceTypeCombo.getValue(), "Выберите источник");
+            String status = required(analysisStatusCombo.getValue(), "Выберите статус");
+            double confidence = parseDouble(analysisConfidenceField.getText(), "Точность должна быть числом");
+            boolean hasAdvertising = analysisHasAdvertisingCheck.isSelected();
+
+            Connection con = DatabaseManager.getConnection();
+            con.setAutoCommit(false);
+            try {
+                int id = DatabaseManager.insertAnalysis(user.getId(), taskId, videoId, sourceType, status, confidence, hasAdvertising);
+                con.commit();
+                Dialogs.showInfo("Успех", "Аналитика добавлена, ID = " + id, dialogStage);
+            } catch (Exception ex) {
+                con.rollback();
+                throw ex;
+            } finally {
+                con.setAutoCommit(true);
+            }
+
+            loadAnalysesForUser(user.getId());
+        } catch (Exception e) {
+            Dialogs.showError("Ошибка", e.getMessage(), dialogStage);
+        }
+    }
+
+    @FXML
+    private void handleUpdateAnalysis() {
+        UserRecord user = usersTable.getSelectionModel().getSelectedItem();
+        AnalysisRecord analysis = analysesTable.getSelectionModel().getSelectedItem();
+        if (user == null || analysis == null) {
+            Dialogs.showError("Ошибка", "Выберите запись аналитики в подчинённой таблице", dialogStage);
+            return;
+        }
+
+        try {
+            String taskId = required(analysisTaskIdField.getText(), "Введите task_id");
+            String videoId = required(analysisVideoIdField.getText(), "Введите video_id");
+            String sourceType = required(analysisSourceTypeCombo.getValue(), "Выберите источник");
+            String status = required(analysisStatusCombo.getValue(), "Выберите статус");
+            double confidence = parseDouble(analysisConfidenceField.getText(), "Точность должна быть числом");
+            boolean hasAdvertising = analysisHasAdvertisingCheck.isSelected();
+
+            Connection con = DatabaseManager.getConnection();
+            con.setAutoCommit(false);
+            try {
+                DatabaseManager.updateAnalysis(analysis.getId(), taskId, videoId, sourceType, status, confidence, hasAdvertising);
+                con.commit();
+                Dialogs.showInfo("Успех", "Аналитика обновлена", dialogStage);
+            } catch (Exception ex) {
+                con.rollback();
+                throw ex;
+            } finally {
+                con.setAutoCommit(true);
+            }
+
+            loadAnalysesForUser(user.getId());
+        } catch (Exception e) {
+            Dialogs.showError("Ошибка", e.getMessage(), dialogStage);
+        }
+    }
+
+    @FXML
+    private void handleDeleteAnalysis() {
+        UserRecord user = usersTable.getSelectionModel().getSelectedItem();
+        AnalysisRecord analysis = analysesTable.getSelectionModel().getSelectedItem();
+        if (user == null || analysis == null) {
+            Dialogs.showError("Ошибка", "Выберите запись аналитики в подчинённой таблице", dialogStage);
+            return;
+        }
+
+        try {
+            Connection con = DatabaseManager.getConnection();
+            con.setAutoCommit(false);
+            try {
+                DatabaseManager.deleteAnalysis(analysis.getId());
+                con.commit();
+                Dialogs.showInfo("Успех", "Аналитика удалена", dialogStage);
+            } catch (Exception ex) {
+                con.rollback();
+                throw ex;
+            } finally {
+                con.setAutoCommit(true);
+            }
+
+            loadAnalysesForUser(user.getId());
+        } catch (Exception e) {
+            Dialogs.showError("Ошибка", e.getMessage(), dialogStage);
+        }
+    }
+
+    @FXML
+    private void handleGenerateReport() {
+        try {
+            LocalDate from = reportDateFrom.getValue();
+            LocalDate to = reportDateTo.getValue();
+            if (from == null || to == null) {
+                Dialogs.showError("Ошибка", "Укажите период отчёта", dialogStage);
+                return;
+            }
+            if (from.isAfter(to)) {
+                Dialogs.showError("Ошибка", "Дата 'с' не может быть позже даты 'по'", dialogStage);
+                return;
+            }
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("DATE_FROM", Date.valueOf(from));
+            params.put("DATE_TO", Date.valueOf(to));
+
+            Path outDir = Paths.get("target", "reports");
+            Files.createDirectories(outDir);
+            String stamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+            Path out = outDir.resolve("lab11_analyses_" + stamp + ".pdf");
+
+            try (Connection con = DatabaseManager.getConnection();
+                 InputStream jrxml = getClass().getResourceAsStream("/com/lab7/reports/analyses_report.jrxml")) {
+                if (jrxml == null) {
+                    throw new IllegalStateException("Шаблон отчёта не найден: /com/lab7/reports/analyses_report.jrxml");
+                }
+                JasperReport report = JasperCompileManager.compileReport(jrxml);
+                JasperPrint print = JasperFillManager.fillReport(report, params, con);
+                JasperExportManager.exportReportToPdfFile(print, out.toString());
+            }
+
+            Dialogs.showInfo("Успех", "Отчёт сформирован: " + out.toAbsolutePath(), dialogStage);
+        } catch (JRException | SQLException e) {
+            Dialogs.showError("Ошибка отчёта", e.getMessage(), dialogStage);
+        } catch (Exception e) {
+            Dialogs.showError("Ошибка", e.getMessage(), dialogStage);
+        }
+    }
+
+    @FXML
     private void handleCreateDemoTable() {
-        String createUserPlanTypeSql = """
-                DO $$
-                BEGIN
-                    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_plan') THEN
-                        CREATE TYPE user_plan AS ENUM ('free', 'starter', 'pro', 'business', 'enterprise');
-                    END IF;
-                END $$;
-                """;
-        String createUserRoleTypeSql = """
-                DO $$
-                BEGIN
-                    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_role') THEN
-                        CREATE TYPE user_role AS ENUM ('user', 'admin');
-                    END IF;
-                END $$;
-                """;
-        String createAnalysisStatusTypeSql = """
-                DO $$
-                BEGIN
-                    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'analysis_status') THEN
-                        CREATE TYPE analysis_status AS ENUM ('pending', 'queued', 'processing', 'completed', 'failed');
-                    END IF;
-                END $$;
-                """;
-        String createSourceTypeSql = """
-                DO $$
-                BEGIN
-                    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'source_type') THEN
-                        CREATE TYPE source_type AS ENUM ('file', 'url', 'youtube', 'telegram', 'instagram', 'tiktok', 'vk');
-                    END IF;
-                END $$;
-                """;
-        String createPaymentStatusTypeSql = """
-                DO $$
-                BEGIN
-                    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_status') THEN
-                        CREATE TYPE payment_status AS ENUM ('pending', 'succeeded', 'canceled', 'failed');
-                    END IF;
-                END $$;
-                """;
-        String createPaymentProviderTypeSql = """
-                DO $$
-                BEGIN
-                    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_provider') THEN
-                        CREATE TYPE payment_provider AS ENUM ('yookassa');
-                    END IF;
-                END $$;
-                """;
-        String createBrandCategoryTypeSql = """
-                DO $$
-                BEGIN
-                    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'brand_category') THEN
-                        CREATE TYPE brand_category AS ENUM (
-                            'bank', 'telecom', 'auto', 'food', 'beverage', 'clothing', 'technology',
-                            'marketplace', 'bookmaker', 'energy', 'airline', 'retail', 'pharma',
-                            'cosmetics', 'gaming', 'education', 'other'
-                        );
-                    END IF;
-                END $$;
-                """;
-        String createUsersSql = """
-                CREATE TABLE IF NOT EXISTS users (
-                    id SERIAL PRIMARY KEY,
-                    email VARCHAR(255) UNIQUE,
-                    plan user_plan NOT NULL DEFAULT 'free',
-                    role user_role NOT NULL DEFAULT 'user',
-                    total_analyses INTEGER NOT NULL DEFAULT 0,
-                    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-                    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-                )
-                """;
-        String createAnalysesSql = """
-                CREATE TABLE IF NOT EXISTS analyses (
-                    id SERIAL PRIMARY KEY,
-                    task_id VARCHAR(255) UNIQUE NOT NULL,
-                    video_id VARCHAR(255) UNIQUE NOT NULL,
-                    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                    source_type source_type NOT NULL,
-                    status analysis_status NOT NULL DEFAULT 'pending',
-                    confidence_score DOUBLE PRECISION NOT NULL DEFAULT 0,
-                    has_advertising BOOLEAN NOT NULL DEFAULT FALSE,
-                    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-                )
-                """;
-        String createPaymentsSql = """
-                CREATE TABLE IF NOT EXISTS payments (
-                    id SERIAL PRIMARY KEY,
-                    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                    amount DOUBLE PRECISION NOT NULL,
-                    currency VARCHAR(8) NOT NULL DEFAULT 'RUB',
-                    status payment_status NOT NULL DEFAULT 'pending',
-                    provider payment_provider NOT NULL DEFAULT 'yookassa',
-                    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-                )
-                """;
-        String createCustomBrandsSql = """
-                CREATE TABLE IF NOT EXISTS custom_brands (
-                    id SERIAL PRIMARY KEY,
-                    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-                    name VARCHAR(255) NOT NULL,
-                    category brand_category NOT NULL DEFAULT 'other',
-                    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-                    detection_threshold DOUBLE PRECISION NOT NULL DEFAULT 0.15,
-                    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
-                )
-                """;
-        String insertUserSql = """
-                INSERT INTO users (email, plan, role, total_analyses, is_active)
-                SELECT ?, CAST(? AS user_plan), CAST(? AS user_role), ?, ?
-                WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = ?)
-                """;
-        String insertAnalysisSql = """
-                INSERT INTO analyses (task_id, video_id, user_id, source_type, status, confidence_score, has_advertising)
-                SELECT ?, ?, ?, CAST(? AS source_type), CAST(? AS analysis_status), ?, ?
-                WHERE NOT EXISTS (SELECT 1 FROM analyses WHERE task_id = ?)
-                """;
-        String insertPaymentSql = """
-                INSERT INTO payments (user_id, amount, status, provider)
-                SELECT ?, ?, CAST(? AS payment_status), CAST(? AS payment_provider)
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM payments WHERE user_id = ? AND amount = ?
-                )
-                """;
-        String insertCustomBrandSql = """
-                INSERT INTO custom_brands (user_id, name, category, is_active, detection_threshold)
-                SELECT ?, ?, CAST(? AS brand_category), ?, ?
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM custom_brands WHERE user_id = ? AND name = ?
-                )
-                """;
-
-        try (Statement stmt = DatabaseManager.getConnection().createStatement()) {
-            stmt.execute(createUserPlanTypeSql);
-            stmt.execute(createUserRoleTypeSql);
-            stmt.execute(createAnalysisStatusTypeSql);
-            stmt.execute(createSourceTypeSql);
-            stmt.execute(createPaymentStatusTypeSql);
-            stmt.execute(createPaymentProviderTypeSql);
-            stmt.execute(createBrandCategoryTypeSql);
-            stmt.execute(createUsersSql);
-            stmt.execute(createAnalysesSql);
-            stmt.execute(createPaymentsSql);
-            stmt.execute(createCustomBrandsSql);
-
-            try (PreparedStatement userPs = DatabaseManager.getConnection().prepareStatement(insertUserSql)) {
-                insertUser(userPs, "admin@veritasad.ai", "enterprise", "admin", 24, true);
-                insertUser(userPs, "analyst@veritasad.ai", "pro", "user", 11, true);
-                insertUser(userPs, "demo@veritasad.ai", "starter", "user", 3, false);
-            }
-
-            int adminId = findUserIdByEmail("admin@veritasad.ai");
-            int analystId = findUserIdByEmail("analyst@veritasad.ai");
-
-            try (PreparedStatement analysisPs = DatabaseManager.getConnection().prepareStatement(insertAnalysisSql)) {
-                insertAnalysis(analysisPs, "task-admin-001", "video-admin-001", adminId, "youtube", "completed", 0.97, true);
-                insertAnalysis(analysisPs, "task-analyst-001", "video-analyst-001", analystId, "telegram", "processing", 0.61, true);
-                insertAnalysis(analysisPs, "task-analyst-002", "video-analyst-002", analystId, "vk", "pending", 0.18, false);
-            }
-
-            try (PreparedStatement paymentPs = DatabaseManager.getConnection().prepareStatement(insertPaymentSql)) {
-                insertPayment(paymentPs, adminId, 49990.00, "succeeded", "yookassa");
-                insertPayment(paymentPs, analystId, 7990.00, "pending", "yookassa");
-            }
-
-            try (PreparedStatement brandPs = DatabaseManager.getConnection().prepareStatement(insertCustomBrandSql)) {
-                insertCustomBrand(brandPs, adminId, "VeritasAI", "technology", true, 0.20);
-                insertCustomBrand(brandPs, analystId, "AdWatch", "technology", true, 0.15);
-            }
-
-            Dialogs.showInfo("Успех", "Базовые таблицы созданы и заполнены демонстрационными данными.", dialogStage);
+        try {
+            DatabaseManager.ensureSchemaAndSeed();
+            Dialogs.showInfo("Успех", "База и тестовые данные инициализированы", dialogStage);
             handleRefreshData();
         } catch (SQLException e) {
-            Dialogs.showError("Ошибка", "Не удалось инициализировать схему: " + e.getMessage(), dialogStage);
+            Dialogs.showError("Ошибка", "Не удалось инициализировать данные: " + e.getMessage(), dialogStage);
         }
     }
 
@@ -296,79 +425,86 @@ public class DatabaseController {
 
     private void loadSummary() {
         try (Statement stmt = DatabaseManager.getConnection().createStatement();
-             ResultSet rs = stmt.executeQuery("""
+             java.sql.ResultSet rs = stmt.executeQuery("""
                      SELECT
                          (SELECT COUNT(*) FROM users) AS users_count,
-                         (SELECT COUNT(*) FROM analyses) AS analyses_count,
-                         (SELECT COUNT(*) FROM payments) AS payments_count,
-                         (SELECT COUNT(*) FROM custom_brands) AS brands_count
+                         (SELECT COUNT(*) FROM analyses) AS analyses_count
                      """)) {
             if (rs.next()) {
-                summaryLabel.setText(String.format(
-                        "users: %d | analyses: %d | payments: %d | custom_brands: %d",
-                        rs.getInt("users_count"),
-                        rs.getInt("analyses_count"),
-                        rs.getInt("payments_count"),
-                        rs.getInt("brands_count")
-                ));
+                summaryLabel.setText(String.format("users: %d | analyses: %d", rs.getInt("users_count"), rs.getInt("analyses_count")));
             }
         } catch (SQLException e) {
             summaryLabel.setText("Сводка недоступна.");
         }
     }
 
-    private void insertUser(PreparedStatement ps, String email, String plan, String role, int totalAnalyses, boolean active) throws SQLException {
-        ps.setString(1, email);
-        ps.setString(2, plan);
-        ps.setString(3, role);
-        ps.setInt(4, totalAnalyses);
-        ps.setBoolean(5, active);
-        ps.setString(6, email);
-        ps.executeUpdate();
-    }
-
-    private int findUserIdByEmail(String email) throws SQLException {
-        try (PreparedStatement ps = DatabaseManager.getConnection().prepareStatement("SELECT id FROM users WHERE email = ?")) {
-            ps.setString(1, email);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("id");
-                }
-            }
+    private void loadAnalysesForUser(int userId) {
+        try {
+            analyses.setAll(DatabaseManager.getAnalysesByUser(userId));
+        } catch (SQLException e) {
+            analyses.clear();
+            Dialogs.showError("Ошибка", "Не удалось загрузить аналитику: " + e.getMessage(), dialogStage);
         }
-        throw new SQLException("Пользователь не найден: " + email);
     }
 
-    private void insertAnalysis(PreparedStatement ps, String taskId, String videoId, int userId, String sourceType, String status, double confidenceScore, boolean hasAdvertising) throws SQLException {
-        ps.setString(1, taskId);
-        ps.setString(2, videoId);
-        ps.setInt(3, userId);
-        ps.setString(4, sourceType);
-        ps.setString(5, status);
-        ps.setDouble(6, confidenceScore);
-        ps.setBoolean(7, hasAdvertising);
-        ps.setString(8, taskId);
-        ps.executeUpdate();
+    private void fillUserForm(UserRecord user) {
+        userEmailField.setText(user.getEmail());
+        userRoleCombo.getSelectionModel().select(user.getRole());
+        userPlanCombo.getSelectionModel().select(user.getPlan());
+        userTotalAnalysesField.setText(String.valueOf(user.getTotalAnalyses()));
+        userActiveCheck.setSelected(user.isActive());
     }
 
-    private void insertPayment(PreparedStatement ps, int userId, double amount, String status, String provider) throws SQLException {
-        ps.setInt(1, userId);
-        ps.setDouble(2, amount);
-        ps.setString(3, status);
-        ps.setString(4, provider);
-        ps.setInt(5, userId);
-        ps.setDouble(6, amount);
-        ps.executeUpdate();
+    private void clearUserForm() {
+        userEmailField.clear();
+        userRoleCombo.getSelectionModel().select("user");
+        userPlanCombo.getSelectionModel().select("free");
+        userTotalAnalysesField.setText("0");
+        userActiveCheck.setSelected(true);
     }
 
-    private void insertCustomBrand(PreparedStatement ps, int userId, String name, String category, boolean active, double detectionThreshold) throws SQLException {
-        ps.setInt(1, userId);
-        ps.setString(2, name);
-        ps.setString(3, category);
-        ps.setBoolean(4, active);
-        ps.setDouble(5, detectionThreshold);
-        ps.setInt(6, userId);
-        ps.setString(7, name);
-        ps.executeUpdate();
+    private void fillAnalysisForm(AnalysisRecord analysis) {
+        analysisTaskIdField.setText(analysis.getTaskId());
+        analysisVideoIdField.setText(analysis.getVideoId());
+        analysisSourceTypeCombo.getSelectionModel().select(analysis.getSourceType());
+        analysisStatusCombo.getSelectionModel().select(analysis.getStatus());
+        analysisConfidenceField.setText(String.valueOf(analysis.getConfidenceScore()));
+        analysisHasAdvertisingCheck.setSelected(analysis.isHasAdvertising());
+    }
+
+    private void clearAnalysisForm() {
+        analysisTaskIdField.clear();
+        analysisVideoIdField.clear();
+        analysisSourceTypeCombo.getSelectionModel().select("youtube");
+        analysisStatusCombo.getSelectionModel().select("pending");
+        analysisConfidenceField.setText("0.0");
+        analysisHasAdvertisingCheck.setSelected(false);
+    }
+
+    private static String required(String value, String message) {
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+        return value.trim();
+    }
+
+    private static int parseNonNegativeInt(String value, String message) {
+        try {
+            int parsed = Integer.parseInt(value.trim());
+            if (parsed < 0) {
+                throw new IllegalArgumentException(message);
+            }
+            return parsed;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    private static double parseDouble(String value, String message) {
+        try {
+            return Double.parseDouble(value.trim());
+        } catch (Exception e) {
+            throw new IllegalArgumentException(message);
+        }
     }
 }

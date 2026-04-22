@@ -4,8 +4,8 @@ import com.lab7.db.DatabaseManager;
 import com.lab7.gui.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Label;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -37,10 +37,10 @@ public class MainController {
             BorderPane page = loader.load();
 
             Stage stage = new Stage();
-            stage.setTitle("Окно работы с БД");
+            stage.setTitle("Окно работы с БД (ЛР8–11)");
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(dialogStage);
-            stage.setScene(new Scene(page, 900, 520));
+            stage.setScene(new Scene(page, 1300, 860));
 
             DatabaseController controller = loader.getController();
             controller.initialize(stage);
@@ -78,15 +78,15 @@ public class MainController {
         String databaseName = DatabaseManager.getDatabaseName();
 
         if (productName == null || productName.isBlank()) {
-            databaseInfoLabel.setText("Работа с таблицей базы данных открывается через меню сверху.");
+            databaseInfoLabel.setText("Окно ЛР8–11 открывается через меню сверху.");
             return;
         }
 
         if (databaseName == null || databaseName.isBlank()) {
-            databaseInfoLabel.setText("Подключение выполнено к СУБД: " + productName + ".");
+            databaseInfoLabel.setText("Подключено к СУБД: " + productName + ".");
             return;
         }
 
-        databaseInfoLabel.setText("Подключение выполнено к СУБД: " + productName + ", база данных: " + databaseName + ".");
+        databaseInfoLabel.setText("Подключено к СУБД: " + productName + ", база: " + databaseName + ".");
     }
 }

@@ -41,7 +41,7 @@ public class LoginController {
         String password = passwordField.getText();
 
         if (user.isEmpty() || password.isEmpty()) {
-            Dialogs.showError("Ошибка ввода данных", "Логин и пароль должны быть заполнены.", dialogStage);
+            Dialogs.showError("Ошибка ввода", "Логин и пароль должны быть заполнены.", dialogStage);
             passwordField.clear();
             return;
         }

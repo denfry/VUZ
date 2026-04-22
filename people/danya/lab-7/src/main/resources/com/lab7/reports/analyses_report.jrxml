@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="analyses_report"
+              whenNoDataType="AllSectionsNoDetail"
+              pageWidth="595"
+              pageHeight="842"
+              columnWidth="555"
+              leftMargin="20"
+              rightMargin="20"
+              topMargin="20"
+              bottomMargin="20">
+
+    <style name="Default"
+           isDefault="true"
+           fontName="DejaVu Sans"
+           pdfFontName="net/sf/jasperreports/fonts/dejavu/DejaVuSans.ttf"
+           pdfEncoding="Identity-H"
+           isPdfEmbedded="true"/>
+
+    <parameter name="DATE_FROM" class="java.sql.Date"/>
+    <parameter name="DATE_TO" class="java.sql.Date"/>
+
+    <queryString>
+        <![CDATA[
+            SELECT u.email,
+                   a.task_id,
+                   a.video_id,
+                   a.source_type AS source_type,
+                   a.status AS status,
+                   a.confidence_score,
+                   CASE WHEN a.has_advertising THEN 'Да' ELSE 'Нет' END AS has_advertising,
+                   CAST(a.created_at AS DATE) AS created_date
+            FROM analyses a
+            JOIN users u ON u.id = a.user_id
+            WHERE CAST(a.created_at AS DATE) BETWEEN $P{DATE_FROM} AND $P{DATE_TO}
+            ORDER BY a.created_at DESC
+        ]]>
+    </queryString>
+
+    <field name="email" class="java.lang.String"/>
+    <field name="task_id" class="java.lang.String"/>
+    <field name="video_id" class="java.lang.String"/>
+    <field name="source_type" class="java.lang.String"/>
+    <field name="status" class="java.lang.String"/>
+    <field name="confidence_score" class="java.lang.Double"/>
+    <field name="has_advertising" class="java.lang.String"/>
+    <field name="created_date" class="java.sql.Date"/>
+
+    <title>
+        <band height="36">
+            <staticText>
+                <reportElement x="0" y="6" width="555" height="24"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Отчёт по анализам (ЛР11)]]></text>
+            </staticText>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="20">
+            <staticText><reportElement x="0" y="0" width="120" height="20"/><text><![CDATA[Email]]></text></staticText>
+            <staticText><reportElement x="120" y="0" width="80" height="20"/><text><![CDATA[Task]]></text></staticText>
+            <staticText><reportElement x="200" y="0" width="80" height="20"/><text><![CDATA[Video]]></text></staticText>
+            <staticText><reportElement x="280" y="0" width="55" height="20"/><text><![CDATA[Source]]></text></staticText>
+            <staticText><reportElement x="335" y="0" width="65" height="20"/><text><![CDATA[Status]]></text></staticText>
+            <staticText><reportElement x="400" y="0" width="50" height="20"/><text><![CDATA[Conf.]]></text></staticText>
+            <staticText><reportElement x="450" y="0" width="45" height="20"/><text><![CDATA[Ad]]></text></staticText>
+            <staticText><reportElement x="495" y="0" width="60" height="20"/><text><![CDATA[Date]]></text></staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="18">
+            <textField><reportElement x="0" y="0" width="120" height="18"/><textFieldExpression><![CDATA[$F{email}]]></textFieldExpression></textField>
+            <textField><reportElement x="120" y="0" width="80" height="18"/><textFieldExpression><![CDATA[$F{task_id}]]></textFieldExpression></textField>
+            <textField><reportElement x="200" y="0" width="80" height="18"/><textFieldExpression><![CDATA[$F{video_id}]]></textFieldExpression></textField>
+            <textField><reportElement x="280" y="0" width="55" height="18"/><textFieldExpression><![CDATA[$F{source_type}]]></textFieldExpression></textField>
+            <textField><reportElement x="335" y="0" width="65" height="18"/><textFieldExpression><![CDATA[$F{status}]]></textFieldExpression></textField>
+            <textField pattern="#0.00"><reportElement x="400" y="0" width="50" height="18"/><textFieldExpression><![CDATA[$F{confidence_score}]]></textFieldExpression></textField>
+            <textField><reportElement x="450" y="0" width="45" height="18"/><textFieldExpression><![CDATA[$F{has_advertising}]]></textFieldExpression></textField>
+            <textField pattern="yyyy-MM-dd"><reportElement x="495" y="0" width="60" height="18"/><textFieldExpression><![CDATA[$F{created_date}]]></textFieldExpression></textField>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="18">
+            <textField>
+                <reportElement x="470" y="0" width="85" height="18"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA["Стр. " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+
+    <noData>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="5" width="555" height="20"/>
+                <textElement textAlignment="Center"/>
+                <text><![CDATA[Нет данных за выбранный период]]></text>
+            </staticText>
+        </band>
+    </noData>
+</jasperReport>

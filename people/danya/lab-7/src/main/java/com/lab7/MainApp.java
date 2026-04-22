@@ -1,14 +1,11 @@
 package com.lab7;
 
-import com.lab7.controllers.LoginController;
 import com.lab7.controllers.MainController;
 import com.lab7.db.DatabaseManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -17,32 +14,12 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        if (showLoginDialog(primaryStage)) {
-            showMainWindow();
-        } else {
-            primaryStage.close();
-        }
-    }
-
-    private boolean showLoginDialog(Stage owner) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/lab7/fxml/LoginView.fxml"));
-            GridPane page = loader.load();
-
-            Stage dialogStage = new Stage();
-            dialogStage.setTitle("Авторизация");
-            dialogStage.initModality(Modality.WINDOW_MODAL);
-            dialogStage.initOwner(owner);
-            dialogStage.setScene(new Scene(page));
-
-            LoginController controller = loader.getController();
-            controller.initialize(dialogStage);
-
-            dialogStage.showAndWait();
-            return controller.isOkClicked();
-        } catch (IOException e) {
+            DatabaseManager.connectEmbedded();
+            showMainWindow();
+        } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            primaryStage.close();
         }
     }
 
